@@ -11,7 +11,7 @@ import RecentTransactions from "./components/RecentTransactions";
 import TVLPanel from "./components/TVLPanel";
 import BlockHistoryChart from "./components/BlockHistoryChart";
 import { TPSChart, GasPriceChart } from "./components/LiveChart";
-import { Clock, TrendingUp, Activity, Shield, Blocks, Fuel, Loader2 } from "lucide-react";
+import { Clock, TrendingUp, Activity, Blocks, Fuel, Loader2 } from "lucide-react";
 import { useMantle, useRealBlockTime, usePersistentPeakTPS, type MantleBlock } from "@/hooks/useMantle";
 
 const Globe = dynamic(() => import("./components/Globe"), { ssr: false });
@@ -151,9 +151,11 @@ export default function Home() {
             </div>
             <div className="h-7 w-px bg-white/10" />
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FFD15C] to-[#FFA726] flex items-center justify-center">
-                <Shield className="w-3.5 h-3.5 text-black" />
-              </div>
+              <img 
+                src="/mantle-logo.png" 
+                alt="Mantle" 
+                className="w-7 h-7 rounded-full object-contain"
+              />
               <div className="flex flex-col">
                 <span className="text-[11px] font-bold">Mantle L2</span>
                 <span className="text-[9px] text-gray-400">Sequencer</span>
