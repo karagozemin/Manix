@@ -28,9 +28,9 @@ export default function Header() {
               className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <img 
-              src="/mantle-logo.png" 
+              src="/GzSli3caYAAQ5UK.jpeg" 
               alt="Manix Logo" 
-              className="w-12 h-12 object-contain"
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-[#FFD15C]/30"
             />
               <div>
                 <h1 className="text-xl font-bold text-white">Manix</h1>
