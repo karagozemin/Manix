@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Header from "./components/Header";
 import StatsCard from "./components/StatsCard";
 import StarField from "./components/StarField";
 import Particles from "./components/Particles";
-import { Clock, TrendingUp, Database, Activity, Shield, Blocks, Fuel, Loader2 } from "lucide-react";
+import RecentTransactions from "./components/RecentTransactions";
+import TVLPanel from "./components/TVLPanel";
+import { TPSChart, GasPriceChart } from "./components/LiveChart";
+import { Clock, TrendingUp, Activity, Shield, Blocks, Fuel, Loader2 } from "lucide-react";
 import { useMantle, type MantleBlock } from "@/hooks/useMantle";
 
 const Globe = dynamic(() => import("./components/Globe"), { ssr: false });
@@ -52,7 +54,6 @@ function BlockHistory() {
 }
 
 function RecentBlockRow({ block, index }: { block: MantleBlock; index: number }) {
-  // Format timestamp to relative time
   const formatTime = (timestamp: number) => {
     const now = Math.floor(Date.now() / 1000);
     const diff = now - timestamp;
@@ -61,7 +62,6 @@ function RecentBlockRow({ block, index }: { block: MantleBlock; index: number })
     return `${Math.floor(diff / 3600)}h ago`;
   };
 
-  // Truncate hash
   const shortHash = `${block.hash.slice(0, 6)}...${block.hash.slice(-4)}`;
 
   return (
@@ -99,7 +99,6 @@ function LoadingState() {
 }
 
 export default function Home() {
-  // Real-time Mantle data
   const { blocks, stats, isLoading, error } = useMantle(3000);
 
   return (
@@ -108,7 +107,7 @@ export default function Home() {
       {/* 1. LAYER: Background Starfield */}
       <StarField />
       
-      {/* 2. LAYER: Particles Effect - Bright star particles */}
+      {/* 2. LAYER: Particles Effect */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
         <Particles
           particleColors={['#ffffff', '#ffffff', '#ffffcc']}
@@ -124,7 +123,7 @@ export default function Home() {
         />
       </div>
       
-      {/* 3. LAYER: Globe (Behind UI) - Centered */}
+      {/* 3. LAYER: Globe */}
       <div className="fixed inset-0 z-0 flex items-center justify-center">
         <div className="w-full h-full -translate-y-30">
           <Globe />
@@ -137,8 +136,8 @@ export default function Home() {
           <Header />
         </div>
         
-        {/* Spacer for Globe visibility - push dashboard down */}
-        <div className="flex-1 min-h-[55vh]"></div>
+        {/* Spacer for Globe visibility */}
+        <div className="flex-1 min-h-[45vh]"></div>
 
         {/* Floating Info Pills */}
         <div className="container mx-auto px-6 mb-3 flex items-center justify-between pointer-events-none">
@@ -195,10 +194,11 @@ export default function Home() {
         {/* Dashboard Grid */}
         <div className="container mx-auto px-6 pb-4 pointer-events-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            
+            {/* Row 1: Block History + Recent Blocks */}
             <BlockHistory />
             
-            {/* Recent Blocks */}
-            <div className="glass-panel rounded-xl p-3 col-span-2 h-[190px]">
+            <div className="glass-panel rounded-xl p-3 col-span-2 h-[180px]">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Recent Blocks</h3>
                 <div className="flex items-center gap-1.5">
@@ -217,7 +217,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Stats Cards - Real Data */}
+            {/* Row 2: Recent Transactions */}
+            <RecentTransactions />
+            
+            {/* Row 2 continued: Live Charts */}
+            <TPSChart />
+            <GasPriceChart />
+
+            {/* Row 3: Stats Cards */}
             <StatsCard 
               title="TPS" 
               value={isLoading ? "..." : stats.tps.toString()} 
@@ -272,6 +279,10 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Row 4: TVL Panel */}
+            <TVLPanel />
+
+            {/* Row 5: Additional Stats */}
             <StatsCard title="Block Time" value="~2" unit="sec" icon={<Clock />} />
             <StatsCard 
               title="Latest Block" 

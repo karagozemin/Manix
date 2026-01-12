@@ -1,10 +1,16 @@
-import { createPublicClient, http, formatEther, formatGwei } from 'viem';
+import { createPublicClient, http, formatEther, formatGwei, webSocket } from 'viem';
 import { mantle } from 'viem/chains';
 
 // Mantle Mainnet Public Client
 export const mantleClient = createPublicClient({
   chain: mantle,
   transport: http('https://rpc.mantle.xyz'),
+});
+
+// WebSocket Client for real-time subscriptions
+export const mantleWsClient = createPublicClient({
+  chain: mantle,
+  transport: webSocket('wss://ws.mantle.xyz'),
 });
 
 // Types
@@ -16,6 +22,20 @@ export interface BlockData {
   gasUsed: bigint;
   gasLimit: bigint;
   baseFeePerGas?: bigint;
+}
+
+export interface TransactionData {
+  hash: string;
+  from: string;
+  to: string | null;
+  value: bigint;
+  gasPrice?: bigint;
+  gas: bigint;
+  input: string;
+  blockNumber: bigint;
+  blockHash: string;
+  transactionIndex: number;
+  timestamp?: number;
 }
 
 export interface NetworkStats {
@@ -108,6 +128,89 @@ export function formatBlockForDisplay(block: BlockData) {
     gasUsed: formatEther(block.gasUsed),
     gasLimit: formatEther(block.gasLimit),
   };
+}
+
+// Get latest transactions from recent blocks
+export async function getLatestTransactions(count: number = 10): Promise<TransactionData[]> {
+  try {
+    const block = await mantleClient.getBlock({
+      includeTransactions: true,
+    });
+    
+    const transactions: TransactionData[] = [];
+    const txs = block.transactions as any[];
+    
+    for (let i = 0; i < Math.min(count, txs.length); i++) {
+      const tx = txs[i];
+      if (typeof tx === 'object') {
+        transactions.push({
+          hash: tx.hash,
+          from: tx.from,
+          to: tx.to,
+          value: tx.value,
+          gasPrice: tx.gasPrice,
+          gas: tx.gas,
+          input: tx.input,
+          blockNumber: block.number,
+          blockHash: block.hash,
+          transactionIndex: tx.transactionIndex,
+          timestamp: Number(block.timestamp),
+        });
+      }
+    }
+    
+    return transactions;
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    return [];
+  }
+}
+
+// Get transaction by hash
+export async function getTransaction(hash: `0x${string}`): Promise<TransactionData | null> {
+  try {
+    const tx = await mantleClient.getTransaction({ hash });
+    return {
+      hash: tx.hash,
+      from: tx.from,
+      to: tx.to,
+      value: tx.value,
+      gasPrice: tx.gasPrice,
+      gas: tx.gas,
+      input: tx.input,
+      blockNumber: tx.blockNumber!,
+      blockHash: tx.blockHash!,
+      transactionIndex: tx.transactionIndex!,
+    };
+  } catch (error) {
+    console.error('Error fetching transaction:', error);
+    return null;
+  }
+}
+
+// Get transaction receipt
+export async function getTransactionReceipt(hash: `0x${string}`) {
+  try {
+    return await mantleClient.getTransactionReceipt({ hash });
+  } catch (error) {
+    console.error('Error fetching transaction receipt:', error);
+    return null;
+  }
+}
+
+// Format transaction value to MNT
+export function formatMNT(value: bigint): string {
+  return formatEther(value);
+}
+
+// Truncate address
+export function truncateAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+// Truncate hash
+export function truncateHash(hash: string): string {
+  return `${hash.slice(0, 10)}...${hash.slice(-6)}`;
 }
 
 // Chain info

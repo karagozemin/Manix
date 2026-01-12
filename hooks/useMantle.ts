@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { mantleClient, type BlockData } from '@/lib/mantle';
-import { formatGwei } from 'viem';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { mantleClient, type BlockData, type TransactionData, getLatestTransactions, truncateAddress, truncateHash, formatMNT } from '@/lib/mantle';
+import { formatGwei, formatEther } from 'viem';
 
 // Types
 export interface MantleBlock {
@@ -19,6 +19,21 @@ export interface MantleStats {
   baseFee: string;
   tps: number;
   peakTps: number;
+}
+
+export interface MantleTransaction {
+  hash: string;
+  from: string;
+  to: string | null;
+  value: string;
+  timestamp: number;
+  type: 'transfer' | 'contract' | 'deploy';
+}
+
+// TPS/Gas history for charts
+export interface HistoryPoint {
+  timestamp: number;
+  value: number;
 }
 
 // Hook for real-time Mantle network data
@@ -168,4 +183,117 @@ export function useGasPrice(refreshInterval: number = 5000) {
   }, [refreshInterval]);
 
   return gasPrice;
+}
+
+// Hook for recent transactions
+export function useTransactions(refreshInterval: number = 5000) {
+  const [transactions, setTransactions] = useState<MantleTransaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const txs = await getLatestTransactions(10);
+      
+      const formatted: MantleTransaction[] = txs.map(tx => {
+        // Determine transaction type
+        let type: 'transfer' | 'contract' | 'deploy' = 'transfer';
+        if (!tx.to) {
+          type = 'deploy';
+        } else if (tx.input && tx.input !== '0x') {
+          type = 'contract';
+        }
+        
+        return {
+          hash: tx.hash,
+          from: tx.from,
+          to: tx.to,
+          value: formatEther(tx.value),
+          timestamp: tx.timestamp || Math.floor(Date.now() / 1000),
+          type,
+        };
+      });
+      
+      setTransactions(formatted);
+      setError(null);
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(fetchTransactions, refreshInterval);
+    return () => clearInterval(interval);
+  }, [fetchTransactions, refreshInterval]);
+
+  return { transactions, isLoading, error, refetch: fetchTransactions };
+}
+
+// Hook for TPS history (for charts)
+export function useTPSHistory(maxPoints: number = 30) {
+  const [history, setHistory] = useState<HistoryPoint[]>([]);
+  const lastBlockRef = useRef<number>(0);
+
+  useEffect(() => {
+    const fetchTPS = async () => {
+      try {
+        const block = await mantleClient.getBlock({ includeTransactions: false });
+        const blockNum = Number(block.number);
+        
+        // Only add new point if block changed
+        if (blockNum !== lastBlockRef.current) {
+          lastBlockRef.current = blockNum;
+          const txCount = Array.isArray(block.transactions) ? block.transactions.length : 0;
+          const tps = Math.round(txCount / 2); // ~2 second blocks
+          
+          setHistory(prev => {
+            const newPoint = { timestamp: Date.now(), value: tps };
+            return [...prev, newPoint].slice(-maxPoints);
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching TPS:', err);
+      }
+    };
+
+    fetchTPS();
+    const interval = setInterval(fetchTPS, 2000);
+    return () => clearInterval(interval);
+  }, [maxPoints]);
+
+  return history;
+}
+
+// Hook for Gas Price history (for charts)
+export function useGasPriceHistory(maxPoints: number = 30) {
+  const [history, setHistory] = useState<HistoryPoint[]>([]);
+
+  useEffect(() => {
+    const fetchGas = async () => {
+      try {
+        const gasPrice = await mantleClient.getGasPrice();
+        const gweiValue = Number(formatGwei(gasPrice));
+        
+        setHistory(prev => {
+          const newPoint = { timestamp: Date.now(), value: gweiValue };
+          return [...prev, newPoint].slice(-maxPoints);
+        });
+      } catch (err) {
+        console.error('Error fetching gas price:', err);
+      }
+    };
+
+    fetchGas();
+    const interval = setInterval(fetchGas, 5000);
+    return () => clearInterval(interval);
+  }, [maxPoints]);
+
+  return history;
 }

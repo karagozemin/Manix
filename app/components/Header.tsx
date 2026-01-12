@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Home, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import ConnectionStatus from "./ConnectionStatus";
 
 export default function Header() {
   const navItems = [
@@ -38,27 +39,31 @@ export default function Header() {
             </motion.div>
           </Link>
 
-          <nav className="flex items-center gap-2">
-            {navItems.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
-                >
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+          <div className="flex items-center gap-4">
+            <ConnectionStatus />
+            
+            <nav className="flex items-center gap-2">
+              {navItems.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
                   >
-                    <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
-                    <span>{item.label}</span>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </nav>
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+                    >
+                      <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </nav>
+          </div>
         </div>
       </div>
     </motion.header>
