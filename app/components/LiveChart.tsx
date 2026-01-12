@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTPSHistory, useGasPriceHistory, type HistoryPoint } from "@/hooks/useMantle";
-import { Activity, Fuel } from "lucide-react";
+import { Activity, Fuel, Loader2 } from "lucide-react";
 
 interface MiniChartProps {
   data: HistoryPoint[];
@@ -10,17 +11,30 @@ interface MiniChartProps {
   height?: number;
 }
 
+// Pre-generated placeholder heights to avoid hydration mismatch
+const PLACEHOLDER_HEIGHTS = [
+  35, 42, 28, 55, 38, 45, 32, 48, 40, 52,
+  30, 58, 36, 44, 50, 33, 47, 41, 53, 29
+];
+
 function MiniChart({ data, color, height = 40 }: MiniChartProps) {
-  if (data.length < 2) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Show placeholder until client-side hydration
+  if (!isClient || data.length < 2) {
     return (
       <div className="flex items-end gap-[2px] h-full">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {PLACEHOLDER_HEIGHTS.map((h, i) => (
           <div
             key={i}
             className="flex-1 rounded-t-sm opacity-20"
             style={{ 
               backgroundColor: color, 
-              height: `${20 + Math.random() * 30}%` 
+              height: `${h}%` 
             }}
           />
         ))}
