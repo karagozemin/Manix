@@ -75,7 +75,7 @@ function EarthWithMarkers() {
           <GlowingMarker 
             key={i} 
             position={pos} 
-            color={i % 3 === 0 ? "#FFD15C" : i % 3 === 1 ? "#FFA726" : "#FFCC00"}
+            color={i % 3 === 0 ? "#00D9A5" : i % 3 === 1 ? "#00B894" : "#10B981"}
             size={0.016}
           />
         ))}
@@ -101,7 +101,7 @@ function EarthWithMarkers() {
 }
 
 // Static glowing dot marker - NO animation
-function GlowingMarker({ position, color = "#FFD15C", size = 0.02 }: { position: THREE.Vector3; color?: string; size?: number }) {
+function GlowingMarker({ position, color = "#00D9A5", size = 0.02 }: { position: THREE.Vector3; color?: string; size?: number }) {
   return (
     <group position={position}>
       {/* Core dot - bright center */}
@@ -123,7 +123,7 @@ function AnimatedArc({
   startPos, 
   endPos, 
   duration = 0.5,
-  color = "#FFD15C"
+  color = "#00D9A5"
 }: { 
   startPos: THREE.Vector3; 
   endPos: THREE.Vector3; 
@@ -285,8 +285,8 @@ export default function Globe() {
       <Canvas camera={{ position: [0, 0, 4.8], fov: 45 }}>
         <ambientLight intensity={1} />
         <directionalLight position={[5, 3, 5]} intensity={2.5} color="#ffffff" />
-        <directionalLight position={[-3, 2, -3]} intensity={1.2} color="#FFD15C" />
-        <pointLight position={[-5, -2, -5]} intensity={1} color="#FFA726" />
+        <directionalLight position={[-3, 2, -3]} intensity={1.2} color="#00D9A5" />
+        <pointLight position={[-5, -2, -5]} intensity={1} color="#00B894" />
         <pointLight position={[0, 5, 0]} intensity={0.8} color="#ffffff" />
         
         <Suspense fallback={null}>

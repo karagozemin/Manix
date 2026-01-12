@@ -14,14 +14,14 @@ export default function BlockHistoryChart() {
           Block History (Tx Count)
         </h3>
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C] animate-pulse"></span>
-          <span className="text-[10px] text-[#FFD15C] font-bold">Live</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00D9A5] animate-pulse"></span>
+          <span className="text-[10px] text-[#00D9A5] font-bold">Live</span>
         </div>
       </div>
 
       {isLoading && history.length === 0 ? (
         <div className="flex items-center justify-center h-6 mb-1">
-          <Loader2 className="w-4 h-4 text-[#FFD15C] animate-spin" />
+          <Loader2 className="w-4 h-4 text-[#00D9A5] animate-spin" />
           <span className="text-[10px] text-gray-500 ml-2">Loading blocks...</span>
         </div>
       ) : (
@@ -38,7 +38,7 @@ export default function BlockHistoryChart() {
                 initial={{ height: 0 }}
                 animate={{ height: `${heightPercent}%` }}
                 transition={{ duration: 0.3, delay: i * 0.01 }}
-                className="flex-1 rounded-t-[2px] bg-[#FFD15C] cursor-pointer hover:bg-[#FFA726] transition-colors"
+                className="flex-1 rounded-t-[2px] bg-[#00D9A5] cursor-pointer hover:bg-[#00B894] transition-colors"
                 style={{ opacity }}
                 title={`Block #${block.blockNumber.toLocaleString()}\n${block.txCount} transactions`}
                 onClick={() => window.open(`https://explorer.mantle.xyz/block/${block.blockNumber}`, '_blank')}
@@ -57,11 +57,11 @@ export default function BlockHistoryChart() {
         </span>
         <div className="flex gap-3">
           <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-[#FFD15C] rounded-full opacity-40"></span>
+            <span className="w-1.5 h-1.5 bg-[#00D9A5] rounded-full opacity-40"></span>
             Low
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-[#FFD15C] rounded-full"></span>
+            <span className="w-1.5 h-1.5 bg-[#00D9A5] rounded-full"></span>
             High
           </span>
         </div>
@@ -78,13 +78,13 @@ export default function BlockHistoryChart() {
           </div>
           <div>
             <span className="text-gray-500">Avg/Block: </span>
-            <span className="text-[#FFD15C] font-mono font-bold">
+            <span className="text-[#00D9A5] font-mono font-bold">
               {Math.round(history.reduce((sum, b) => sum + b.txCount, 0) / history.length)}
             </span>
           </div>
           <div>
             <span className="text-gray-500">Max: </span>
-            <span className="text-[#FFA726] font-mono font-bold">{maxTxCount}</span>
+            <span className="text-[#00B894] font-mono font-bold">{maxTxCount}</span>
           </div>
         </div>
       )}
