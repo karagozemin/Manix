@@ -36,8 +36,8 @@ function RecentBlockRow({ block, index }: { block: MantleBlock; index: number })
       onClick={() => window.open(`https://explorer.mantle.xyz/block/${block.number}`, '_blank')}
     >
       <div className="flex items-center gap-3">
-        <div className="p-1.5 bg-[#FFD15C]/10 rounded-lg">
-          <Blocks className="w-3.5 h-3.5 text-[#FFD15C]" />
+        <div className="p-1.5 bg-[#8B5CF6]/10 rounded-lg">
+          <Blocks className="w-3.5 h-3.5 text-[#8B5CF6]" />
         </div>
         <div className="flex flex-col">
           <span className="text-xs font-bold text-white font-mono">#{block.number.toLocaleString('en-US')}</span>
@@ -46,7 +46,7 @@ function RecentBlockRow({ block, index }: { block: MantleBlock; index: number })
       </div>
       <div className="text-right">
         <div className="text-[10px] text-gray-500 font-mono">{formatTime(block.timestamp)}</div>
-        <div className="text-xs font-mono text-[#FFA726]">{block.txCount} txs</div>
+        <div className="text-xs font-mono text-[#3B82F6]">{block.txCount} txs</div>
       </div>
     </motion.div>
   );
@@ -55,7 +55,7 @@ function RecentBlockRow({ block, index }: { block: MantleBlock; index: number })
 function LoadingState() {
   return (
     <div className="flex items-center justify-center py-8">
-      <Loader2 className="w-6 h-6 text-[#FFD15C] animate-spin" />
+      <Loader2 className="w-6 h-6 text-[#00D9A5] animate-spin" />
       <span className="ml-2 text-sm text-gray-400">Connecting to Mantle...</span>
     </div>
   );
@@ -94,7 +94,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#0a0a12] text-white selection:bg-[#FFD15C]/30 overflow-hidden">
+    <div className="relative min-h-screen w-full bg-[#0a0a12] text-white selection:bg-[#00D9A5]/30 overflow-hidden">
       
       {/* 1. LAYER: Background Starfield */}
       <StarField />
@@ -102,7 +102,7 @@ export default function Home() {
       {/* 2. LAYER: Particles Effect */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
         <Particles
-          particleColors={['#ffffff', '#ffffff', '#ffffcc']}
+          particleColors={['#ffffff', '#ffffff', '#00D9A5']}
           particleCount={400}
           particleSpread={25}
           speed={0.1}
@@ -136,7 +136,7 @@ export default function Home() {
            <motion.div 
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="pointer-events-auto glass-panel rounded-full px-5 py-2 flex items-center gap-3 border border-[#FFD15C]/20 bg-black/40 backdrop-blur-xl"
+            className="pointer-events-auto glass-panel rounded-full px-5 py-2 flex items-center gap-3 border border-[#00D9A5]/20 bg-black/40 backdrop-blur-xl"
           >
             <div className="flex flex-col">
               <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Block</span>
@@ -196,8 +196,8 @@ export default function Home() {
                <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Recent Blocks</h3>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C] animate-pulse"></span>
-                  <span className="text-[10px] text-[#FFD15C] font-bold">Live from Mantle</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-pulse"></span>
+                  <span className="text-[10px] text-[#8B5CF6] font-bold">Live from Mantle</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1 overflow-hidden">
@@ -249,9 +249,9 @@ export default function Home() {
                   {isLoading ? "..." : parseFloat(stats.baseFee).toFixed(4)} 
                   <span className="text-xs text-gray-500 font-sans ml-1">Gwei</span>
                 </motion.div>
-                <div className="h-1 w-full bg-[#FFD15C]/20 mt-2 rounded-full overflow-hidden">
+                <div className="h-1 w-full bg-[#00D9A5]/20 mt-2 rounded-full overflow-hidden">
                   <motion.div 
-                    className="h-full bg-[#FFD15C]" 
+                    className="h-full bg-[#00D9A5]" 
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, Math.max(5, parseFloat(stats.baseFee || '0') * 100))}%` }}
                     transition={{ duration: 0.5 }}
@@ -267,14 +267,14 @@ export default function Home() {
                   key={stats.gasPrice}
                   initial={{ opacity: 0.5 }}
                   animate={{ opacity: 1 }}
-                  className="text-xl font-mono font-bold text-[#FFA726]"
+                  className="text-xl font-mono font-bold text-[#3B82F6]"
                 >
                   {isLoading ? "..." : parseFloat(stats.gasPrice).toFixed(4)} 
                   <span className="text-xs text-gray-500 font-sans ml-1">Gwei</span>
                 </motion.div>
-                <div className="h-1 w-full bg-[#FFA726]/20 mt-2 rounded-full overflow-hidden">
+                <div className="h-1 w-full bg-[#3B82F6]/20 mt-2 rounded-full overflow-hidden">
                   <motion.div 
-                    className="h-full bg-[#FFA726]" 
+                    className="h-full bg-[#3B82F6]" 
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, Math.max(5, parseFloat(stats.gasPrice || '0') * 100))}%` }}
                     transition={{ duration: 0.5 }}
@@ -318,14 +318,14 @@ export default function Home() {
                   <Fuel className="w-3.5 h-3.5 text-gray-500" />
                   <span className="text-[10px] text-gray-500 uppercase">Gas Token</span>
                 </div>
-                <span className="text-xl font-mono font-bold text-[#FFD15C]">MNT</span>
+                <span className="text-xl font-mono font-bold text-[#00D9A5]">MNT</span>
                 <span className="text-[9px] text-gray-500">Native</span>
               </div>
 
               {/* Layer */}
               <div className="bg-white/5 rounded-lg p-3 flex flex-col justify-center items-center">
                 <span className="text-[10px] text-gray-500 uppercase mb-1">Layer</span>
-                <span className="text-xl font-mono font-bold text-[#FFA726]">L2</span>
+                <span className="text-xl font-mono font-bold text-[#3B82F6]">L2</span>
                 <span className="text-[9px] text-gray-500">Ethereum Rollup</span>
               </div>
             </div>

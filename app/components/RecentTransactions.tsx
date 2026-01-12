@@ -21,7 +21,7 @@ function TransactionRow({ tx, index }: { tx: MantleTransaction; index: number })
       case 'contract':
         return <FileCode className="w-3 h-3 text-purple-400" />;
       default:
-        return <ArrowRight className="w-3 h-3 text-[#FFD15C]" />;
+        return <ArrowRight className="w-3 h-3 text-[#00D9A5]" />;
     }
   };
 
@@ -53,7 +53,7 @@ function TransactionRow({ tx, index }: { tx: MantleTransaction; index: number })
         </div>
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-[#FFD15C]">
+            <span className="text-[10px] font-mono text-[#00D9A5]">
               {truncateHash(tx.hash)}
             </span>
             <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-gray-400">
@@ -93,15 +93,15 @@ export default function RecentTransactions() {
           Recent Transactions
         </h3>
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C] animate-pulse"></span>
-          <span className="text-[10px] text-[#FFD15C] font-bold">Live</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00D9A5] animate-pulse"></span>
+          <span className="text-[10px] text-[#00D9A5] font-bold">Live</span>
         </div>
       </div>
       
       <div className="flex flex-col max-h-[200px] overflow-y-auto custom-scrollbar">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-5 h-5 text-[#FFD15C] animate-spin" />
+            <Loader2 className="w-5 h-5 text-[#00D9A5] animate-spin" />
             <span className="ml-2 text-sm text-gray-400">Loading transactions...</span>
           </div>
         ) : error ? (

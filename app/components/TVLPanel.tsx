@@ -52,7 +52,7 @@ export default function TVLPanel() {
     <div className="glass-panel rounded-xl p-3 col-span-2">
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-[#FFD15C]" />
+          <DollarSign className="w-4 h-4 text-[#00D9A5]" />
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
             Total Value Locked
           </h3>
@@ -61,7 +61,7 @@ export default function TVLPanel() {
           href="https://defillama.com/chain/Mantle" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-[10px] text-gray-500 hover:text-[#FFD15C] flex items-center gap-1 transition-colors"
+          className="text-[10px] text-gray-500 hover:text-[#00D9A5] flex items-center gap-1 transition-colors"
         >
           DefiLlama <ExternalLink className="w-3 h-3" />
         </a>
@@ -69,7 +69,7 @@ export default function TVLPanel() {
 
       {tvlLoading ? (
         <div className="flex items-center justify-center py-4">
-          <Loader2 className="w-5 h-5 text-[#FFD15C] animate-spin" />
+          <Loader2 className="w-5 h-5 text-[#00D9A5] animate-spin" />
         </div>
       ) : tvlData ? (
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -84,11 +84,11 @@ export default function TVLPanel() {
           </div>
           <div className="border-l border-white/10 pl-4">
             <div className="text-[10px] text-gray-500 uppercase mb-1">Protocols</div>
-            <div className="text-xl font-mono font-bold text-[#FFD15C]">{tvlData.protocols}</div>
+            <div className="text-xl font-mono font-bold text-[#00D9A5]">{tvlData.protocols}</div>
           </div>
           <div className="border-l border-white/10 pl-4">
             <div className="text-[10px] text-gray-500 uppercase mb-1">Chain Rank</div>
-            <div className="text-xl font-mono font-bold text-[#FFA726]">
+            <div className="text-xl font-mono font-bold text-[#3B82F6]">
               #{tvlData.rank}
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function TVLPanel() {
         <h4 className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">Top Protocols</h4>
         {protocolsLoading ? (
           <div className="flex items-center justify-center py-4">
-            <Loader2 className="w-4 h-4 text-[#FFD15C] animate-spin" />
+            <Loader2 className="w-4 h-4 text-[#00D9A5] animate-spin" />
           </div>
         ) : protocols.length > 0 ? (
           <div className="flex flex-col">
