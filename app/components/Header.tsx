@@ -16,7 +16,7 @@ export default function Header() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="absolute top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/30 border-b border-[#00D9A5]/10"
+      className="absolute top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/30 border-b border-[#FFD15C]/10"
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
@@ -30,7 +30,7 @@ export default function Header() {
               <img 
               src="/GzSli3caYAAQ5UK.jpeg" 
               alt="Manix Logo" 
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-[#00D9A5]/30"
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-[#FFD15C]/30"
             />
               <div>
                 <h1 className="text-xl font-bold text-white">Manix</h1>
@@ -59,7 +59,7 @@ export default function Header() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
                       >
-                        <Icon className="w-4 h-4 group-hover:text-[#00D9A5] transition-colors" />
+                        <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
                         <span>{item.label}</span>
                         <ExternalLink className="w-3 h-3 opacity-50" />
                       </a>
@@ -68,7 +68,7 @@ export default function Header() {
                         href={item.href}
                         className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
                       >
-                        <Icon className="w-4 h-4 group-hover:text-[#00D9A5] transition-colors" />
+                        <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
                         <span>{item.label}</span>
                       </Link>
                     )}

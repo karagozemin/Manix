@@ -203,13 +203,13 @@ function TransactionFlows({ validatorPositions }: { validatorPositions: THREE.Ve
     speed: number;
   }>>([]);
   
-  const colors = [
-    "#00D9A5", "#00B894", "#10B981", "#059669",  // Mantle Teal/Green
-    "#00FFFF", "#00BFFF", "#1E90FF",              // Cyan/Mavi
-    "#34D399", "#6EE7B7", "#A7F3D0",              // Light Green
-    "#00FF00", "#7CFC00", "#ADFF2F",              // Bright Green
-    "#FFFFFF", "#F0F0F0"                          // Beyaz
-  ];
+    const colors = [
+      "#00D9A5", "#00B894", "#10B981", "#059669",  // Mantle Teal/Green
+      "#00FFFF", "#00BFFF", "#1E90FF",              // Cyan/Mavi
+      "#34D399", "#6EE7B7", "#A7F3D0",              // Light Green
+      "#00FF00", "#7CFC00", "#ADFF2F",              // Bright Green
+      "#FFFFFF", "#F0F0F0"                          // Beyaz
+    ];
   const arcIdRef = useRef(0);
   const lastUsedRef = useRef<Set<number>>(new Set());
 

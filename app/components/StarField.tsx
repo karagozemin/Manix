@@ -16,7 +16,7 @@ interface Star {
 
 // Generate stars only on client side
 function generateStars(): Star[] {
-  const colors = ["#00D9A5", "#00B894", "#10B981"];
+  const colors = ["#FFD15C", "#FFA726", "#FFCC00"];
   const bigStars: Star[] = Array.from({ length: 35 }, (_, i) => ({
     id: i,
     top: `${Math.random() * 100}%`,
