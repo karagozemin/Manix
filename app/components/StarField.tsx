@@ -25,7 +25,7 @@ function generateStars(): Star[] {
     height: `${Math.random() * 2 + 2}px`,
     color: colors[i % 3],
     opacity: Math.random() * 0.5 + 0.2,
-    glow: `0 0 ${Math.random() * 6 + 4}px rgba(0, 217, 165, 0.6)`,
+    glow: `0 0 ${Math.random() * 6 + 4}px rgba(255, 209, 92, 0.6)`,
     duration: `${Math.random() * 5 + 3}s`,
   }));
 
