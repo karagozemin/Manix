@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Home, ShieldCheck } from "lucide-react";
+import { Home, BookOpen, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import ConnectionStatus from "./ConnectionStatus";
 
 export default function Header() {
   const navItems = [
-    { label: "Home", href: "/", icon: Home },
-    { label: "Validators", href: "/validators", icon: ShieldCheck },
+    { label: "Home", href: "/", icon: Home, external: false },
+    { label: "Docs", href: "https://docs.mantle.xyz/network/", icon: BookOpen, external: true },
   ];
 
   return (
@@ -52,13 +52,26 @@ export default function Header() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
                   >
-                    <Link
-                      href={item.href}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
-                    >
-                      <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
-                      <span>{item.label}</span>
-                    </Link>
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+                      >
+                        <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
+                        <span>{item.label}</span>
+                        <ExternalLink className="w-3 h-3 opacity-50" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+                      >
+                        <Icon className="w-4 h-4 group-hover:text-[#FFD15C] transition-colors" />
+                        <span>{item.label}</span>
+                      </Link>
+                    )}
                   </motion.div>
                 );
               })}
