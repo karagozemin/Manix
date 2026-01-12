@@ -6,6 +6,7 @@ export interface TVLData {
   tvl: number;
   change24h: number;
   protocols: number;
+  rank: number;
 }
 
 export interface ProtocolData {
@@ -16,21 +17,27 @@ export interface ProtocolData {
   change24h: number;
 }
 
-// Get Mantle chain TVL
+// Get Mantle chain TVL with rank
 export async function getMantleTVL(): Promise<TVLData | null> {
   try {
     const response = await fetch(`${DEFILLAMA_BASE}/v2/chains`);
     const chains = await response.json();
     
-    const mantle = chains.find((c: any) => 
+    // Sort chains by TVL to get rank
+    const sortedChains = [...chains].sort((a: any, b: any) => (b.tvl || 0) - (a.tvl || 0));
+    
+    const mantleIndex = sortedChains.findIndex((c: any) => 
       c.name.toLowerCase() === 'mantle' || c.gecko_id === 'mantle'
     );
+    
+    const mantle = sortedChains[mantleIndex];
     
     if (mantle) {
       return {
         tvl: mantle.tvl || 0,
         change24h: mantle.change_1d || 0,
         protocols: mantle.protocols || 0,
+        rank: mantleIndex + 1, // 1-indexed rank
       };
     }
     return null;

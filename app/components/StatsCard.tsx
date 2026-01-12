@@ -46,9 +46,7 @@ export default function StatsCard({ title, value, unit, icon, sparkline }: Stats
       )}
       
       {!sparkline && (
-         <div className="w-full h-1 bg-white/5 mt-3 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#FFD15C] to-[#FFA726] w-[60%] opacity-50" />
-         </div>
+         <div className="w-full h-1 bg-gradient-to-r from-[#FFD15C]/20 to-[#FFA726]/20 mt-3 rounded-full" />
       )}
       </div>
   );

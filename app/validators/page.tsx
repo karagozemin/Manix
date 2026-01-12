@@ -99,10 +99,15 @@ function SequencerInfo() {
   );
 }
 
-function NetworkFeatures() {
+function NetworkFeatures({ gasPrice, blockTime }: { gasPrice: string; blockTime: number }) {
+  const formatBlockTime = (ms: number) => {
+    if (ms >= 1000) return `~${(ms / 1000).toFixed(1)}s blocks`;
+    return `~${ms}ms blocks`;
+  };
+
   const features = [
-    { icon: Zap, title: "Low Gas Fees", desc: "~0.02 Gwei average" },
-    { icon: Clock, title: "Fast Finality", desc: "~2 second blocks" },
+    { icon: Zap, title: "Low Gas Fees", desc: `${parseFloat(gasPrice).toFixed(4)} Gwei` },
+    { icon: Clock, title: "Fast Finality", desc: formatBlockTime(blockTime) },
     { icon: Shield, title: "Ethereum Security", desc: "Inherits L1 security" },
     { icon: Database, title: "EigenDA", desc: "Modular DA layer" },
   ];
@@ -260,7 +265,7 @@ export default function ValidatorsPage() {
             {/* Main Content Grid */}
             <div className="grid md:grid-cols-2 gap-6">
               <SequencerInfo />
-              <NetworkFeatures />
+              <NetworkFeatures gasPrice={stats.gasPrice} blockTime={blockTime} />
               <RecentActivity />
               
               {/* Additional Info */}

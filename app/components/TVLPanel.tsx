@@ -87,10 +87,9 @@ export default function TVLPanel() {
             <div className="text-xl font-mono font-bold text-[#FFD15C]">{tvlData.protocols}</div>
           </div>
           <div className="border-l border-white/10 pl-4">
-            <div className="text-[10px] text-gray-500 uppercase mb-1">Rank</div>
+            <div className="text-[10px] text-gray-500 uppercase mb-1">Chain Rank</div>
             <div className="text-xl font-mono font-bold text-[#FFA726]">
-              <Layers className="w-4 h-4 inline mr-1" />
-              L2
+              #{tvlData.rank}
             </div>
           </div>
         </div>
