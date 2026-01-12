@@ -198,3 +198,9 @@ MIT License - feel free to use this project for your own purposes.
 <p align="center">
   Built with 💛 for the Zama ecosystem
 </p>
+
+---
+
+<p align="center">
+  <em>Manix Edition - 2026</em>
+</p>
