@@ -281,29 +281,51 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Row 4: TVL Panel */}
+            {/* Row 4: TVL Panel + Network Stats Grid */}
             <TVLPanel />
 
-            {/* Row 5: Additional Stats - REAL Block Time */}
-            <StatsCard 
-              title="Block Time" 
-              value={isCalculating ? "..." : formatBlockTime(blockTime)} 
-              unit="sec" 
-              icon={<Clock />} 
-            />
-            <StatsCard 
-              title="Latest Block" 
-              value={isLoading ? "..." : blocks[0]?.txCount.toString() || "0"} 
-              unit="txs" 
-              icon={<Blocks />} 
-            />
-            <StatsCard title="Gas Token" value="MNT" unit="Native" icon={<Fuel />} />
-            
-            {/* Network Info */}
-            <div className="glass-panel rounded-xl p-3 flex flex-col justify-center items-center">
-              <span className="text-[10px] text-gray-500 uppercase mb-1">Layer</span>
-              <span className="text-lg font-bold text-[#FFD15C]">L2</span>
-              <span className="text-[9px] text-gray-500 mt-1">Ethereum Rollup</span>
+            {/* 2x2 Grid for Block Time, Latest Block, Gas Token, Layer */}
+            <div className="glass-panel rounded-xl p-3 col-span-2 grid grid-cols-2 gap-2">
+              {/* Block Time */}
+              <div className="bg-white/5 rounded-lg p-3 flex flex-col justify-center items-center">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Clock className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-[10px] text-gray-500 uppercase">Block Time</span>
+                </div>
+                <span className="text-xl font-mono font-bold text-white">
+                  {isCalculating ? "..." : formatBlockTime(blockTime)}
+                </span>
+                <span className="text-[9px] text-gray-500">sec</span>
+              </div>
+
+              {/* Latest Block */}
+              <div className="bg-white/5 rounded-lg p-3 flex flex-col justify-center items-center">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Blocks className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-[10px] text-gray-500 uppercase">Latest Block</span>
+                </div>
+                <span className="text-xl font-mono font-bold text-white">
+                  {isLoading ? "..." : blocks[0]?.txCount.toString() || "0"}
+                </span>
+                <span className="text-[9px] text-gray-500">txs</span>
+              </div>
+
+              {/* Gas Token */}
+              <div className="bg-white/5 rounded-lg p-3 flex flex-col justify-center items-center">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Fuel className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-[10px] text-gray-500 uppercase">Gas Token</span>
+                </div>
+                <span className="text-xl font-mono font-bold text-[#FFD15C]">MNT</span>
+                <span className="text-[9px] text-gray-500">Native</span>
+              </div>
+
+              {/* Layer */}
+              <div className="bg-white/5 rounded-lg p-3 flex flex-col justify-center items-center">
+                <span className="text-[10px] text-gray-500 uppercase mb-1">Layer</span>
+                <span className="text-xl font-mono font-bold text-[#FFA726]">L2</span>
+                <span className="text-[9px] text-gray-500">Ethereum Rollup</span>
+              </div>
             </div>
           </div>
         </div>
