@@ -18,7 +18,7 @@ const atmosphereFragmentShader = `
   varying vec3 vNormal;
   void main() {
     float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.5);
-    gl_FragColor = vec4(1.0, 0.82, 0.36, 1.0) * intensity * 0.9;
+    gl_FragColor = vec4(0.0, 0.85, 0.65, 1.0) * intensity * 0.9;
   }
 `;
 
@@ -204,10 +204,10 @@ function TransactionFlows({ validatorPositions }: { validatorPositions: THREE.Ve
   }>>([]);
   
   const colors = [
-    "#FFFF00", "#FFD700", "#FFA500", "#FF6600",  // Sarı/Turuncu
+    "#00D9A5", "#00B894", "#10B981", "#059669",  // Mantle Teal/Green
     "#00FFFF", "#00BFFF", "#1E90FF",              // Cyan/Mavi
-    "#FF00FF", "#FF69B4", "#DA70D6",              // Mor/Pembe
-    "#00FF00", "#7CFC00", "#ADFF2F",              // Yeşil
+    "#34D399", "#6EE7B7", "#A7F3D0",              // Light Green
+    "#00FF00", "#7CFC00", "#ADFF2F",              // Bright Green
     "#FFFFFF", "#F0F0F0"                          // Beyaz
   ];
   const arcIdRef = useRef(0);
