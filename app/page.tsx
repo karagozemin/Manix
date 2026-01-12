@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Header from "./components/Header";
@@ -8,50 +9,12 @@ import StarField from "./components/StarField";
 import Particles from "./components/Particles";
 import RecentTransactions from "./components/RecentTransactions";
 import TVLPanel from "./components/TVLPanel";
+import BlockHistoryChart from "./components/BlockHistoryChart";
 import { TPSChart, GasPriceChart } from "./components/LiveChart";
 import { Clock, TrendingUp, Activity, Shield, Blocks, Fuel, Loader2 } from "lucide-react";
-import { useMantle, type MantleBlock } from "@/hooks/useMantle";
+import { useMantle, useRealBlockTime, usePersistentPeakTPS, type MantleBlock } from "@/hooks/useMantle";
 
 const Globe = dynamic(() => import("./components/Globe"), { ssr: false });
-
-// Pre-generated opacity values for block history visualization
-const blockOpacities = [
-  0.85, 0.72, 0.91, 0.68, 0.78, 0.95, 0.73, 0.88, 0.67, 0.82,
-  0.76, 0.93, 0.71, 0.89, 0.75, 0.84, 0.69, 0.92, 0.77, 0.86,
-  0.74, 0.90, 0.70, 0.87, 0.79, 0.94, 0.72, 0.83, 0.68, 0.91,
-  0.76, 0.88, 0.73, 0.85, 0.80, 0.93, 0.71, 0.89, 0.77, 0.86,
-  0.74, 0.92, 0.65, 0.70, 0.68
-];
-
-function BlockHistory() {
-  return (
-    <div className="glass-panel rounded-xl p-3 col-span-2 relative overflow-hidden group">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Block History</h3>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C] animate-pulse"></span>
-          <span className="text-[10px] text-[#FFD15C] font-bold">Live</span>
-        </div>
-      </div>
-      <div className="flex gap-0.5 h-6 w-full mb-1">
-        {blockOpacities.map((opacity, i) => (
-          <div 
-            key={i} 
-            className={`flex-1 rounded-[1px] ${i < 42 ? 'bg-[#FFD15C]' : 'bg-red-500/50'}`}
-            style={{ opacity }} 
-          />
-        ))}
-      </div>
-      <div className="flex justify-between text-[10px] text-gray-500 font-mono mt-2">
-        <span>Latest Blocks (L2)</span>
-        <div className="flex gap-3">
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-[#FFD15C] rounded-full"></span>Confirmed</span>
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>Pending</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function RecentBlockRow({ block, index }: { block: MantleBlock; index: number }) {
   const formatTime = (timestamp: number) => {
@@ -100,6 +63,35 @@ function LoadingState() {
 
 export default function Home() {
   const { blocks, stats, isLoading, error } = useMantle(3000);
+  const { blockTime, isCalculating } = useRealBlockTime();
+  const { peakTps, peakTimestamp, updatePeak } = usePersistentPeakTPS();
+
+  // Update peak TPS whenever current TPS changes
+  useEffect(() => {
+    if (stats.tps > 0) {
+      updatePeak(stats.tps);
+    }
+  }, [stats.tps, updatePeak]);
+
+  // Format block time for display
+  const formatBlockTime = (ms: number) => {
+    if (ms >= 1000) {
+      return `${(ms / 1000).toFixed(1)}`;
+    }
+    return `${ms}`;
+  };
+
+  // Format peak timestamp
+  const formatPeakTime = (timestamp: number) => {
+    if (!timestamp) return 'Session';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-[#0a0a12] text-white selection:bg-[#FFD15C]/30 overflow-hidden">
@@ -195,8 +187,8 @@ export default function Home() {
         <div className="container mx-auto px-6 pb-4 pointer-events-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             
-            {/* Row 1: Block History + Recent Blocks */}
-            <BlockHistory />
+            {/* Row 1: Block History Chart (REAL DATA) + Recent Blocks */}
+            <BlockHistoryChart />
             
             <div className="glass-panel rounded-xl p-3 col-span-2 h-[180px]">
               <div className="flex justify-between items-center mb-2">
@@ -234,8 +226,8 @@ export default function Home() {
             />
             <StatsCard 
               title="Peak TPS" 
-              value={isLoading ? "..." : stats.peakTps.toString()} 
-              unit="Session" 
+              value={peakTps > 0 ? peakTps.toString() : (isLoading ? "..." : stats.peakTps.toString())} 
+              unit={formatPeakTime(peakTimestamp)} 
               icon={<TrendingUp />} 
             />
             
@@ -282,8 +274,13 @@ export default function Home() {
             {/* Row 4: TVL Panel */}
             <TVLPanel />
 
-            {/* Row 5: Additional Stats */}
-            <StatsCard title="Block Time" value="~2" unit="sec" icon={<Clock />} />
+            {/* Row 5: Additional Stats - REAL Block Time */}
+            <StatsCard 
+              title="Block Time" 
+              value={isCalculating ? "..." : formatBlockTime(blockTime)} 
+              unit="sec" 
+              icon={<Clock />} 
+            />
             <StatsCard 
               title="Latest Block" 
               value={isLoading ? "..." : blocks[0]?.txCount.toString() || "0"} 

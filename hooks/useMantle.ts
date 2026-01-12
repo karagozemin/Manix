@@ -297,3 +297,156 @@ export function useGasPriceHistory(maxPoints: number = 30) {
 
   return history;
 }
+
+// Block history data for bar chart
+export interface BlockHistoryItem {
+  blockNumber: number;
+  txCount: number;
+  timestamp: number;
+}
+
+// Hook for Block History (last N blocks with tx counts)
+export function useBlockHistory(blockCount: number = 45) {
+  const [history, setHistory] = useState<BlockHistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [maxTxCount, setMaxTxCount] = useState(1);
+  const lastFetchedBlock = useRef<number>(0);
+
+  useEffect(() => {
+    const fetchBlockHistory = async () => {
+      try {
+        const latestBlockNumber = await mantleClient.getBlockNumber();
+        const latestNum = Number(latestBlockNumber);
+        
+        // Only fetch new blocks
+        if (lastFetchedBlock.current === latestNum) return;
+        
+        // Fetch blocks in parallel (batches of 10)
+        const blocks: BlockHistoryItem[] = [];
+        const batchSize = 10;
+        
+        for (let i = 0; i < blockCount; i += batchSize) {
+          const batchPromises = [];
+          for (let j = i; j < Math.min(i + batchSize, blockCount); j++) {
+            const blockNum = latestBlockNumber - BigInt(j);
+            batchPromises.push(
+              mantleClient.getBlock({ blockNumber: blockNum, includeTransactions: false })
+                .then(block => ({
+                  blockNumber: Number(block.number),
+                  txCount: Array.isArray(block.transactions) ? block.transactions.length : 0,
+                  timestamp: Number(block.timestamp),
+                }))
+                .catch(() => null)
+            );
+          }
+          const batchResults = await Promise.all(batchPromises);
+          blocks.push(...batchResults.filter((b): b is BlockHistoryItem => b !== null));
+        }
+        
+        // Sort by block number (oldest first for chart)
+        blocks.sort((a, b) => a.blockNumber - b.blockNumber);
+        
+        setHistory(blocks);
+        setMaxTxCount(Math.max(...blocks.map(b => b.txCount), 1));
+        lastFetchedBlock.current = latestNum;
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching block history:', err);
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlockHistory();
+    const interval = setInterval(fetchBlockHistory, 5000);
+    return () => clearInterval(interval);
+  }, [blockCount]);
+
+  return { history, isLoading, maxTxCount };
+}
+
+// Hook for real block time calculation
+export function useRealBlockTime() {
+  const [blockTime, setBlockTime] = useState<number>(2000); // Default 2s
+  const [isCalculating, setIsCalculating] = useState(true);
+
+  useEffect(() => {
+    const calculateBlockTime = async () => {
+      try {
+        const latestBlockNumber = await mantleClient.getBlockNumber();
+        
+        // Get last 10 blocks to calculate average
+        const blocks = await Promise.all([
+          mantleClient.getBlock({ blockNumber: latestBlockNumber }),
+          mantleClient.getBlock({ blockNumber: latestBlockNumber - 10n }),
+        ]);
+        
+        const latestTimestamp = Number(blocks[0].timestamp);
+        const olderTimestamp = Number(blocks[1].timestamp);
+        
+        // Calculate average block time in ms
+        const avgBlockTime = ((latestTimestamp - olderTimestamp) / 10) * 1000;
+        
+        setBlockTime(Math.round(avgBlockTime));
+        setIsCalculating(false);
+      } catch (err) {
+        console.error('Error calculating block time:', err);
+        setIsCalculating(false);
+      }
+    };
+
+    calculateBlockTime();
+    const interval = setInterval(calculateBlockTime, 30000); // Update every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  return { blockTime, isCalculating };
+}
+
+// Hook for persistent Peak TPS (stored in localStorage)
+const PEAK_TPS_KEY = 'manix_peak_tps';
+const PEAK_TPS_TIMESTAMP_KEY = 'manix_peak_tps_timestamp';
+
+export function usePersistentPeakTPS() {
+  const [peakTps, setPeakTps] = useState<number>(0);
+  const [peakTimestamp, setPeakTimestamp] = useState<number>(0);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(PEAK_TPS_KEY);
+      const storedTimestamp = localStorage.getItem(PEAK_TPS_TIMESTAMP_KEY);
+      
+      if (stored) {
+        setPeakTps(parseInt(stored, 10));
+      }
+      if (storedTimestamp) {
+        setPeakTimestamp(parseInt(storedTimestamp, 10));
+      }
+    }
+  }, []);
+
+  // Function to update peak if current TPS is higher
+  const updatePeak = useCallback((currentTps: number) => {
+    if (currentTps > peakTps) {
+      setPeakTps(currentTps);
+      setPeakTimestamp(Date.now());
+      
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(PEAK_TPS_KEY, currentTps.toString());
+        localStorage.setItem(PEAK_TPS_TIMESTAMP_KEY, Date.now().toString());
+      }
+    }
+  }, [peakTps]);
+
+  // Reset peak
+  const resetPeak = useCallback(() => {
+    setPeakTps(0);
+    setPeakTimestamp(0);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(PEAK_TPS_KEY);
+      localStorage.removeItem(PEAK_TPS_TIMESTAMP_KEY);
+    }
+  }, []);
+
+  return { peakTps, peakTimestamp, updatePeak, resetPeak };
+}
