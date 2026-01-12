@@ -231,7 +231,7 @@ export default function Home() {
               icon={<TrendingUp />} 
             />
             
-            {/* Gas Info Panel */}
+            {/* Gas Info Panel - REAL dynamic progress bars */}
             <div className="glass-panel rounded-xl p-3 col-span-2 grid grid-cols-2 gap-3">
               <div>
                 <div className="text-[10px] text-gray-500 uppercase mb-1 flex justify-between">
@@ -248,7 +248,12 @@ export default function Home() {
                   <span className="text-xs text-gray-500 font-sans ml-1">Gwei</span>
                 </motion.div>
                 <div className="h-1 w-full bg-[#FFD15C]/20 mt-2 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#FFD15C] w-[40%]" />
+                  <motion.div 
+                    className="h-full bg-[#FFD15C]" 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, Math.max(5, parseFloat(stats.baseFee || '0') * 100))}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
                 </div>
               </div>
               <div className="border-l border-white/10 pl-4">
@@ -266,7 +271,12 @@ export default function Home() {
                   <span className="text-xs text-gray-500 font-sans ml-1">Gwei</span>
                 </motion.div>
                 <div className="h-1 w-full bg-[#FFA726]/20 mt-2 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#FFA726] w-[65%]" />
+                  <motion.div 
+                    className="h-full bg-[#FFA726]" 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, Math.max(5, parseFloat(stats.gasPrice || '0') * 100))}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
                 </div>
               </div>
             </div>
