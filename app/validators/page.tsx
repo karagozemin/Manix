@@ -59,7 +59,7 @@ export default function ValidatorsPage() {
               transition={{ delay: 0.5 }}
               className="text-gray-400 text-lg mb-8 leading-relaxed"
             >
-              When the Zama Network launches, all active validators will be listed here
+              Explore all sequencers and validators on the Mantle Network
               <span className="text-[#FFD15C]"> in real-time</span>.
             </motion.p>
 
@@ -77,7 +77,7 @@ export default function ValidatorsPage() {
               <ul className="space-y-3 text-sm text-gray-400">
                 <li className="flex items-center gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C]"></span>
-                  Validator rankings and stake amounts
+                  Sequencer and validator rankings
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C]"></span>
@@ -89,7 +89,7 @@ export default function ValidatorsPage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FFD15C]"></span>
-                  FHE transaction statistics
+                  MNT transaction statistics
                 </li>
               </ul>
             </motion.div>

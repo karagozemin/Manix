@@ -27,7 +27,7 @@ export default function StatsCard({ title, value, unit, icon, sparkline }: Stats
       <div className="flex items-end justify-between">
         <div className="text-2xl font-bold font-mono text-white tracking-tight">
           {value}
-          {title.includes("Staked") && <span className="text-xs text-gray-500 ml-1 font-sans">FHE</span>}
+          {title.includes("Staked") && <span className="text-xs text-gray-500 ml-1 font-sans">MNT</span>}
         </div>
       </div>
 

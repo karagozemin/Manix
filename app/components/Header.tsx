@@ -27,13 +27,13 @@ export default function Header() {
               className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <img 
-              src="/zama-logo.jpg" 
-              alt="Fhelix Logo" 
+              src="/mantle-logo.png" 
+              alt="Manix Logo" 
               className="w-12 h-12 object-contain"
             />
               <div>
-                <h1 className="text-xl font-bold text-white">Fhelix</h1>
-                <p className="text-xs text-zinc-400">Zama Network</p>
+                <h1 className="text-xl font-bold text-white">Manix</h1>
+                <p className="text-xs text-zinc-400">Mantle Network</p>
               </div>
             </motion.div>
           </Link>

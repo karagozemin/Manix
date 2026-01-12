@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="public/zama-logo.jpg" alt="Fhelix Logo" width="200" />
+  <img src="public/mantle-logo.png" alt="Manix Logo" width="200" />
 </p>
 
-<h1 align="center">Fhelix</h1>
+<h1 align="center">Manix</h1>
 
 <p align="center">
-  <strong>Zama Network Explorer</strong><br/>
-  Real-time visualization of the Zama FHE Network
+  <strong>Mantle Network Explorer</strong><br/>
+  Real-time visualization of the Mantle Network
 </p>
 
 <p align="center">
@@ -21,17 +21,15 @@
 
 ## 🌟 About
 
-**Fhelix** is an elegant network visualizer and explorer for the Zama Network - the world's first Fully Homomorphic Encryption (FHE) blockchain. Experience real-time network activity through an interactive 3D globe, live transaction flows, and comprehensive network statistics.
-
-> ⚠️ **Note:** Currently running with mock data for demonstration purposes. Once Zama Chain is fully operational, Fhelix will transition to displaying real validators, live transactions, and actual network metrics.
+**Manix** is an elegant network visualizer and explorer for the Mantle Network - a high-performance Ethereum L2 built with modular architecture. Experience real-time network activity through an interactive 3D globe, live transaction flows, and comprehensive network statistics.
 
 ---
 
 ## ✨ Features
 
 ### 🌍 Interactive 3D Globe
-- Real-time visualization of validator nodes across the globe
-- Animated transaction arcs flowing between validators
+- Real-time visualization of network nodes across the globe
+- Animated transaction arcs flowing between nodes
 - Smooth rotation and full 360° orbit controls
 - Golden atmosphere glow effect
 
@@ -39,21 +37,20 @@
 - **TPS (Transactions Per Second)** - Live network throughput
 - **Peak TPS** - Historical maximum performance
 - **Block Time** - Average block confirmation time
-- **Encrypted Txs** - FHE transaction count
-- **Total Staked** - Network stake amount
+- **Total Txs** - Transaction count
+- **Total Staked** - Network stake amount (MNT)
 - **Gas Price** - Current network fees
-- **Median Fee** - Transaction fee statistics
 
 ### 📦 Recent Blocks
-- Live block feed with validator attribution
+- Live block feed with real-time data from Mantle
 - Transaction count per block
-- Round numbers and block details
+- Block numbers and details
 - Animated block entry transitions
 
-### 🏛️ Epoch Information
-- Current epoch number
-- Active validator display
-- Validator location data
+### 🏛️ Network Information
+- Current block height
+- Active validators/sequencers display
+- Network health metrics
 
 ### ✨ Visual Effects
 - Particle star field background
@@ -73,7 +70,7 @@
 | **React Three Fiber** | 3D globe rendering |
 | **Three.js** | WebGL graphics |
 | **Framer Motion** | Smooth animations |
-| **OGL** | Particle effects |
+| **viem** | Ethereum/Mantle RPC interactions |
 | **Lucide Icons** | Beautiful icons |
 
 ---
@@ -89,10 +86,10 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/fhelix.git
+git clone https://github.com/karagozemin/Manix.git
 
 # Navigate to project directory
-cd fhelix/zama-visualizer
+cd Manix
 
 # Install dependencies
 npm install
@@ -110,22 +107,24 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 ## 📁 Project Structure
 
 ```
-zama-visualizer/
+Manix/
 ├── app/
 │   ├── components/
-│   │   ├── Globe.tsx          # 3D Earth with validators & arcs
+│   │   ├── Globe.tsx          # 3D Earth with nodes & arcs
 │   │   ├── Header.tsx         # Navigation header
 │   │   ├── Particles.tsx      # Star particle background
 │   │   ├── StarField.tsx      # CSS star background
 │   │   ├── StatsCard.tsx      # Statistics display cards
 │   │   └── ...
 │   ├── validators/
-│   │   └── page.tsx           # Validators page (Coming Soon)
+│   │   └── page.tsx           # Validators page
 │   ├── globals.css            # Global styles & theme
 │   ├── layout.tsx             # Root layout
 │   └── page.tsx               # Main dashboard
+├── lib/
+│   └── mantle.ts              # Mantle RPC client & helpers
 ├── public/
-│   └── zama-logo.jpg          # Fhelix logo
+│   └── mantle-logo.png        # Manix logo
 ├── package.json
 └── README.md
 ```
@@ -134,7 +133,7 @@ zama-visualizer/
 
 ## 🎨 Theme
 
-Fhelix uses a sophisticated **Black & Gold** color scheme:
+Manix uses a sophisticated **Black & Gold** color scheme:
 
 | Color | Hex | Usage |
 |-------|-----|-------|
@@ -147,36 +146,35 @@ Fhelix uses a sophisticated **Black & Gold** color scheme:
 
 ## 🗺️ Roadmap
 
-### Current (v1.0 - Mock Data)
+### Phase 1 - Foundation ✅
 - [x] Interactive 3D globe visualization
 - [x] Animated transaction arcs
-- [x] Live dashboard with mock statistics
+- [x] Dashboard with statistics
 - [x] Recent blocks feed
-- [x] Epoch & validator display
 - [x] Particle effects background
-- [x] Validators page (Coming Soon)
 - [x] Responsive design
 
-### Future (v2.0 - Live Data)
-- [ ] Real Zama Network API integration
-- [ ] Live validator data from chain
-- [ ] Actual transaction tracking
+### Phase 2 - Live Data 🚧
+- [ ] Real Mantle Network RPC integration
+- [ ] Live block & transaction data
+- [ ] Real-time gas prices
+- [ ] Actual TPS metrics
+
+### Phase 3 - Advanced Features
 - [ ] Historical data & charts
-- [ ] Validator detail pages
+- [ ] Transaction detail pages
 - [ ] Block explorer functionality
 - [ ] Search functionality
 - [ ] Mobile optimization
 
 ---
 
-## 🔮 Vision
+## 🔗 Mantle Network
 
-Once **Zama Chain** launches and stabilizes, Fhelix will evolve into a full-featured network explorer with:
-
-- **Real Validators**: Live validator nodes with actual stake amounts, uptime, and performance metrics
-- **Live Transactions**: Real FHE transactions flowing across the globe
-- **True Statistics**: Actual TPS, block times, gas prices, and network health metrics
-- **Block Explorer**: Full block and transaction inspection capabilities
+- **Chain ID:** 5000
+- **RPC URL:** https://rpc.mantle.xyz
+- **Native Token:** MNT
+- **Explorer:** https://explorer.mantle.xyz
 
 ---
 
@@ -188,15 +186,16 @@ MIT License - feel free to use this project for your own purposes.
 
 ## 🙏 Acknowledgments
 
-- [Zama](https://zama.ai) - For pioneering FHE technology
+- [Mantle Network](https://mantle.xyz) - For the high-performance L2
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) - 3D rendering
 - [Framer Motion](https://www.framer.com/motion/) - Animations
 - [Tailwind CSS](https://tailwindcss.com) - Styling
+- [viem](https://viem.sh) - Ethereum interactions
 
 ---
 
 <p align="center">
-  Built with 💛 for the Zama ecosystem
+  Built with 💛 for the Mantle ecosystem
 </p>
 
 ---

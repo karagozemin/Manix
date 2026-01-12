@@ -15,8 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fhelix | Zama Network Explorer",
-  description: "Real-time visualization of the Zama Network",
+  title: "Manix | Mantle Network Explorer",
+  description: "Real-time visualization of the Mantle Network",
 };
 
 export default function RootLayout({

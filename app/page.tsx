@@ -264,7 +264,7 @@ export default function Home() {
                   <span>Median Fee</span>
                   <span>1m</span>
                 </div>
-                <div className="text-xl font-mono font-bold">0.0329 <span className="text-xs text-gray-500 font-sans">FHE</span></div>
+                <div className="text-xl font-mono font-bold">0.0329 <span className="text-xs text-gray-500 font-sans">MNT</span></div>
                 <div className="h-1 w-full bg-[#FFD15C]/20 mt-2 rounded-full overflow-hidden">
                    <div className="h-full bg-[#FFD15C] w-[40%]" />
                 </div>
@@ -282,8 +282,8 @@ export default function Home() {
             </div>
 
             <StatsCard title="Block Time" value="403" unit="ms" icon={<Clock />} />
-            <StatsCard title="Encrypted Txs" value="1,247" unit="%" icon={<Lock />} />
-            <StatsCard title="Total Staked" value="14,951" unit="FHE" icon={<Database />} />
+            <StatsCard title="Total Txs" value="1,247" unit="24h" icon={<Lock />} />
+            <StatsCard title="Total Staked" value="14,951" unit="MNT" icon={<Database />} />
             <div className="glass-panel rounded-xl p-3 flex flex-col justify-center items-center">
                <span className="text-[10px] text-gray-500 uppercase mb-1">APY</span>
                <span className="text-lg font-bold text-[#FFD15C]">+7.38M</span>
