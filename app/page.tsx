@@ -11,6 +11,7 @@ import RecentTransactions from "./components/RecentTransactions";
 import TVLPanel from "./components/TVLPanel";
 import BlockHistoryChart from "./components/BlockHistoryChart";
 import { TPSChart, GasPriceChart } from "./components/LiveChart";
+import NetworkInsights from "./components/NetworkInsights";
 import { Clock, TrendingUp, Activity, Blocks, Fuel, Loader2 } from "lucide-react";
 import { useMantle, useRealBlockTime, usePersistentPeakTPS, type MantleBlock } from "@/hooks/useMantle";
 
@@ -328,6 +329,16 @@ export default function Home() {
                 <span className="text-xl font-mono font-bold text-[#3B82F6]">L2</span>
                 <span className="text-[9px] text-gray-500">Ethereum Rollup</span>
               </div>
+            </div>
+
+            {/* Row 5: AI Network Insights */}
+            <div className="col-span-4">
+              <NetworkInsights 
+                tps={stats.tps}
+                gasPrice={stats.gasPrice}
+                blockTime={blockTime}
+                peakTps={peakTps > 0 ? peakTps : stats.peakTps}
+              />
             </div>
           </div>
         </div>
