@@ -1,30 +1,76 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, TrendingUp, TrendingDown, Zap, AlertTriangle, CheckCircle, Activity, Fuel } from "lucide-react";
+import { Brain, TrendingUp, TrendingDown, Zap, AlertTriangle, CheckCircle, Activity, Fuel, Sparkles, RefreshCw } from "lucide-react";
 
 interface NetworkInsightsProps {
   tps: number;
   gasPrice: string;
   blockTime: number;
   peakTps: number;
+  tvl?: number;
 }
 
 interface Insight {
   id: string;
-  type: 'success' | 'warning' | 'info' | 'alert';
+  type: 'success' | 'warning' | 'info' | 'alert' | 'ai';
   icon: React.ReactNode;
   title: string;
   message: string;
   priority: number;
 }
 
-export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps }: NetworkInsightsProps) {
-  const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
+interface AIInsightResponse {
+  insight: string;
+  source: 'openai' | 'rule-based' | 'fallback';
+  model?: string;
+}
 
-  // AI-like analysis of network conditions
-  const insights = useMemo(() => {
+export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps, tvl = 331 }: NetworkInsightsProps) {
+  const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
+  const [aiInsight, setAiInsight] = useState<string | null>(null);
+  const [aiSource, setAiSource] = useState<string>('loading');
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+
+  // Fetch AI insight
+  const fetchAIInsight = useCallback(async () => {
+    setIsLoadingAI(true);
+    try {
+      const response = await fetch('/api/ai-insight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tps,
+          gasPrice,
+          blockTime,
+          tvl,
+          peakTps
+        })
+      });
+      
+      if (response.ok) {
+        const data: AIInsightResponse = await response.json();
+        setAiInsight(data.insight);
+        setAiSource(data.source);
+      }
+    } catch (error) {
+      console.error('Failed to fetch AI insight:', error);
+      setAiSource('error');
+    } finally {
+      setIsLoadingAI(false);
+    }
+  }, [tps, gasPrice, blockTime, tvl, peakTps]);
+
+  // Fetch AI insight on mount and every 30 seconds
+  useEffect(() => {
+    fetchAIInsight();
+    const interval = setInterval(fetchAIInsight, 30000);
+    return () => clearInterval(interval);
+  }, [fetchAIInsight]);
+
+  // Rule-based insights (always available)
+  const ruleBasedInsights = useMemo(() => {
     const results: Insight[] = [];
     const gas = parseFloat(gasPrice);
     
@@ -118,35 +164,54 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps }: N
       });
     }
 
-    // L2 Advantage insight
-    results.push({
-      id: 'l2-advantage',
-      type: 'info',
-      icon: <Brain className="w-4 h-4" />,
-      title: 'L2 Efficiency',
-      message: 'Mantle L2 offers 95%+ gas savings vs Ethereum mainnet.',
-      priority: 0
-    });
-
-    // Sort by priority (higher = more important)
     return results.sort((a, b) => b.priority - a.priority);
   }, [tps, gasPrice, blockTime, peakTps]);
 
+  // Combine AI insight with rule-based insights
+  const allInsights = useMemo(() => {
+    const insights: Insight[] = [];
+    
+    // Add AI insight at the top if available
+    if (aiInsight) {
+      insights.push({
+        id: 'ai-insight',
+        type: 'ai',
+        icon: <Sparkles className="w-4 h-4" />,
+        title: aiSource === 'openai' ? 'AI Analysis' : 'Smart Analysis',
+        message: aiInsight,
+        priority: 10 // Highest priority
+      });
+    }
+    
+    // Add rule-based insights
+    insights.push(...ruleBasedInsights);
+    
+    return insights;
+  }, [aiInsight, aiSource, ruleBasedInsights]);
+
   // Rotate through insights
   useEffect(() => {
-    if (insights.length <= 1) return;
+    if (allInsights.length <= 1) return;
     
     const interval = setInterval(() => {
-      setCurrentInsightIndex(prev => (prev + 1) % insights.length);
-    }, 5000);
+      setCurrentInsightIndex(prev => (prev + 1) % allInsights.length);
+    }, 6000);
 
     return () => clearInterval(interval);
-  }, [insights.length]);
+  }, [allInsights.length]);
 
-  const currentInsight = insights[currentInsightIndex] || insights[0];
+  const currentInsight = allInsights[currentInsightIndex] || allInsights[0];
 
   const getTypeStyles = (type: Insight['type']) => {
     switch (type) {
+      case 'ai':
+        return {
+          bg: 'bg-purple-500/10',
+          border: 'border-purple-500/30',
+          icon: 'text-purple-400',
+          title: 'text-purple-400',
+          glow: 'shadow-purple-500/20'
+        };
       case 'success':
         return {
           bg: 'bg-emerald-500/10',
@@ -194,19 +259,36 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps }: N
           <div className="p-1.5 bg-[#8B5CF6]/20 rounded-lg">
             <Brain className="w-4 h-4 text-[#8B5CF6]" />
           </div>
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            AI Network Insights
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              AI Network Intelligence
+            </span>
+            <span className="text-[9px] text-gray-500">
+              {aiSource === 'openai' ? '🤖 Powered by GPT-3.5' : aiSource === 'rule-based' ? '⚡ Smart Analysis' : '📊 Analyzing...'}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          {insights.map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentInsightIndex ? 'bg-[#8B5CF6] w-3' : 'bg-white/20'
-              }`}
-            />
-          ))}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchAIInsight}
+            disabled={isLoadingAI}
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+            title="Refresh AI insight"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-gray-400 ${isLoadingAI ? 'animate-spin' : ''}`} />
+          </button>
+          <div className="flex items-center gap-1">
+            {allInsights.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  idx === currentInsightIndex 
+                    ? idx === 0 && aiInsight ? 'bg-purple-500 w-3' : 'bg-[#00D9A5] w-3' 
+                    : 'bg-white/20'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -224,10 +306,17 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps }: N
               {currentInsight.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <div className={`text-sm font-bold ${styles.title} mb-0.5`}>
-                {currentInsight.title}
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-bold ${styles.title}`}>
+                  {currentInsight.title}
+                </span>
+                {currentInsight.type === 'ai' && (
+                  <span className="px-1.5 py-0.5 text-[8px] font-bold bg-purple-500/20 text-purple-400 rounded uppercase">
+                    AI
+                  </span>
+                )}
               </div>
-              <div className="text-xs text-gray-400 leading-relaxed">
+              <div className="text-xs text-gray-400 leading-relaxed mt-0.5">
                 {currentInsight.message}
               </div>
             </div>
@@ -239,9 +328,12 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps }: N
         <div className="flex items-center justify-between text-[10px] text-gray-500">
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-pulse"></span>
-            Analyzing {insights.length} metrics
+            {allInsights.length} insights • Real-time analysis
           </span>
-          <span>Updated in real-time</span>
+          <span className="flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-purple-400" />
+            {aiSource === 'openai' ? 'GPT-3.5 Turbo' : 'Heuristic Engine'}
+          </span>
         </div>
       </div>
     </div>
