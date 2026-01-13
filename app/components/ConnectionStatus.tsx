@@ -37,12 +37,16 @@ export default function ConnectionStatus() {
       animate={{ opacity: 1, scale: 1 }}
       className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${config.bgColor} border border-white/5`}
     >
-      <motion.div
-        animate={status === 'connecting' ? { rotate: 360 } : {}}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-      >
+      {status === 'connecting' ? (
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+        >
+          <Icon className={`w-3.5 h-3.5 ${config.color}`} />
+        </motion.div>
+      ) : (
         <Icon className={`w-3.5 h-3.5 ${config.color}`} />
-      </motion.div>
+      )}
       
       <span className={`text-[10px] font-medium ${config.color}`}>
         {config.label}
