@@ -62,10 +62,10 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps, tvl
     }
   }, [tps, gasPrice, blockTime, tvl, peakTps]);
 
-  // Fetch AI insight on mount and every 30 seconds
+  // Fetch AI insight on mount and every 60 seconds (rate-limit friendly)
   useEffect(() => {
     fetchAIInsight();
-    const interval = setInterval(fetchAIInsight, 30000);
+    const interval = setInterval(fetchAIInsight, 60000); // 60 seconds
     return () => clearInterval(interval);
   }, [fetchAIInsight]);
 

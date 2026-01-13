@@ -1,17 +1,49 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
+// Server-side cache to prevent excessive API calls
+let cachedInsight: { insight: string; timestamp: number; source: string } | null = null;
+const CACHE_DURATION = 45000; // 45 seconds cache
+
+// Rate limiting
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 10000; // Minimum 10 seconds between requests
+
 export async function POST(request: Request) {
   try {
     const { tps, gasPrice, blockTime, tvl, peakTps } = await request.json();
+    const now = Date.now();
+
+    // Check cache first - return cached insight if still valid
+    if (cachedInsight && (now - cachedInsight.timestamp) < CACHE_DURATION) {
+      return NextResponse.json({
+        insight: cachedInsight.insight,
+        source: cachedInsight.source,
+        cached: true
+      });
+    }
+
+    // Rate limiting - if too soon, return fallback
+    if ((now - lastRequestTime) < MIN_REQUEST_INTERVAL) {
+      return NextResponse.json({
+        insight: generateFallbackInsight(tps, gasPrice, blockTime),
+        source: 'rate-limited',
+        cached: false
+      });
+    }
 
     // If no API key, return rule-based fallback
     if (!process.env.GROQ_API_KEY) {
+      const insight = generateFallbackInsight(tps, gasPrice, blockTime);
+      cachedInsight = { insight, timestamp: now, source: 'rule-based' };
       return NextResponse.json({
-        insight: generateFallbackInsight(tps, gasPrice, blockTime),
+        insight,
         source: 'rule-based'
       });
     }
+
+    // Update last request time
+    lastRequestTime = now;
 
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
@@ -53,18 +85,27 @@ Respond with ONLY the insight text, no quotes or explanation. Be specific and ac
     const insight = completion.choices[0]?.message?.content?.trim() || 
       generateFallbackInsight(tps, gasPrice, blockTime);
 
+    // Cache the result
+    cachedInsight = { insight, timestamp: now, source: 'groq' };
+
     return NextResponse.json({
       insight,
       source: 'groq',
-      model: 'llama-3.1-8b-instant'
+      model: 'llama-3.1-8b-instant',
+      cached: false
     });
 
   } catch (error) {
     console.error('AI Insight Error:', error);
     
     // Return fallback on error
+    const fallbackInsight = 'Network operating normally. Mantle L2 ready for transactions.';
+    
+    // Cache error fallback too
+    cachedInsight = { insight: fallbackInsight, timestamp: Date.now(), source: 'fallback' };
+    
     return NextResponse.json({
-      insight: 'Network operating normally. Mantle L2 ready for transactions.',
+      insight: fallbackInsight,
       source: 'fallback',
       error: true
     });
