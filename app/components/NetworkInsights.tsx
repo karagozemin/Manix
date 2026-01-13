@@ -23,7 +23,7 @@ interface Insight {
 
 interface AIInsightResponse {
   insight: string;
-  source: 'openai' | 'rule-based' | 'fallback';
+  source: 'groq' | 'rule-based' | 'fallback';
   model?: string;
 }
 
@@ -177,7 +177,7 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps, tvl
         id: 'ai-insight',
         type: 'ai',
         icon: <Sparkles className="w-4 h-4" />,
-        title: aiSource === 'openai' ? 'AI Analysis' : 'Smart Analysis',
+        title: aiSource === 'groq' ? 'AI Analysis' : 'Smart Analysis',
         message: aiInsight,
         priority: 10 // Highest priority
       });
@@ -264,7 +264,7 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps, tvl
               AI Network Intelligence
             </span>
             <span className="text-[9px] text-gray-500">
-              {aiSource === 'openai' ? '🤖 Powered by GPT-3.5' : aiSource === 'rule-based' ? '⚡ Smart Analysis' : '📊 Analyzing...'}
+              {aiSource === 'groq' ? '🤖 Powered by Llama 3.1' : aiSource === 'rule-based' ? '⚡ Smart Analysis' : '📊 Analyzing...'}
             </span>
           </div>
         </div>
@@ -332,7 +332,7 @@ export default function NetworkInsights({ tps, gasPrice, blockTime, peakTps, tvl
           </span>
           <span className="flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-purple-400" />
-            {aiSource === 'openai' ? 'GPT-3.5 Turbo' : 'Heuristic Engine'}
+            {aiSource === 'groq' ? 'Llama 3.1 (Groq)' : 'Heuristic Engine'}
           </span>
         </div>
       </div>

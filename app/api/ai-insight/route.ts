@@ -1,21 +1,20 @@
 import { NextResponse } from 'next/server';
+import Groq from 'groq-sdk';
 
 export async function POST(request: Request) {
   try {
     const { tps, gasPrice, blockTime, tvl, peakTps } = await request.json();
 
     // If no API key, return rule-based fallback
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GROQ_API_KEY) {
       return NextResponse.json({
         insight: generateFallbackInsight(tps, gasPrice, blockTime),
         source: 'rule-based'
       });
     }
 
-    // Dynamic import to avoid build-time errors
-    const OpenAI = (await import('openai')).default;
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+    const groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
     });
 
     const prompt = `You are an AI analyst for Mantle Network (Ethereum L2). Analyze these real-time metrics and provide ONE brief, actionable insight (max 100 chars):
@@ -35,8 +34,8 @@ Consider:
 
 Respond with ONLY the insight text, no quotes or explanation. Be specific and actionable.`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.1-8b-instant',
       messages: [
         {
           role: 'system',
@@ -56,8 +55,8 @@ Respond with ONLY the insight text, no quotes or explanation. Be specific and ac
 
     return NextResponse.json({
       insight,
-      source: 'openai',
-      model: 'gpt-3.5-turbo'
+      source: 'groq',
+      model: 'llama-3.1-8b-instant'
     });
 
   } catch (error) {
